@@ -1,0 +1,370 @@
+﻿<Window
+    x:Class="WPF_Overconsumption.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:WPF_Overconsumption" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid" Title="Overconsumption Calculator v1.0"
+    Width="1024" Height="768"
+    Background="#FFE7E8EC"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}"
+    mc:Ignorable="d">
+
+    <DockPanel>
+        <Menu
+            Height="Auto" DockPanel.Dock="Top"
+            IsMainMenu="True">
+            <MenuItem Header="_File">
+                <MenuItem Click="menuOpen_Click" Header="_Open" />
+                <MenuItem Click="menuSave_Click" Header="_Save" />
+                <Separator />
+                <MenuItem Header="_Exit" />
+            </MenuItem>
+            <MenuItem Header="_Help" />
+        </Menu>
+
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                    Width="350" MinWidth="300"
+                    MaxWidth="550" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1.5*" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <GridSplitter
+                Grid.Row="0" Grid.RowSpan="3"
+                Grid.Column="1" Width="5"
+                HorizontalAlignment="Stretch" />
+
+            <GridSplitter
+                Grid.Row="1" Grid.Column="2"
+                Grid.ColumnSpan="2" Height="5"
+                HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+            <DockPanel
+                Grid.Row="0" Grid.RowSpan="3"
+                Grid.Column="0">
+                <Label
+                    DockPanel.Dock="Top" FontSize="14"
+                    FontWeight="Bold" Foreground="DarkGray">
+                    Calculation Data:
+                </Label>
+
+                <Border
+                    Margin="10,0,10,10" Padding="0,5,0,0"
+                    BorderBrush="Black" BorderThickness="2"
+                    CornerRadius="5">
+                    <!--<Border.Effect>
+                        <DropShadowEffect
+                            BlurRadius="10" ShadowDepth="8"
+                            Color="Gray" />
+                    </Border.Effect>-->
+
+
+                    <Grid x:Name="grdData" DataContext="{Binding ElementName=dgvCalc, Path=SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*" />
+                            <ColumnDefinition Width="0.75*" />
+                            <ColumnDefinition Width="0.6*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  Date  -->
+                        <TextBlock
+                            x:Name="tvDate" Grid.Row="0"
+                            Grid.Column="0" Margin="10,0,0,0"
+                            HorizontalAlignment="Left" VerticalAlignment="Center">
+                            Date of measurement:
+                        </TextBlock>
+                        <DatePicker
+                            x:Name="dtDate" Grid.Row="0"
+                            Grid.Column="1" Grid.ColumnSpan="2"
+                            Width="100" HorizontalAlignment="Left"
+                            VerticalAlignment="Center" HorizontalContentAlignment="Left"
+                            SelectedDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <!--  RPM  -->
+                        <TextBlock
+                            x:Name="tvRPM" Grid.Row="1"
+                            Grid.Column="0" Margin="10,0,0,0"
+                            HorizontalAlignment="Left" VerticalAlignment="Center">
+                            Current TurboCharger RPM:
+                        </TextBlock>
+                        <TextBox
+                            x:Name="tbRPM" Grid.Row="1"
+                            Grid.Column="1" Width="80"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Text="{Binding TurboRPM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <!--  RPM Limits  -->
+                        <TextBlock
+                            x:Name="tvRPMLimit" Grid.Row="2"
+                            Grid.Column="0" Margin="10,0,0,0"
+                            HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Run Text="RPM Range: [" />
+                            <Run Text="{Binding RPMLower, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Run Text=" - " />
+                            <Run Text="{Binding RPMHigher, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Run Text="]" />
+                        </TextBlock>
+
+                        <!--  Calculated Power  -->
+                        <TextBlock
+                            x:Name="tvCalcPower" Grid.Row="3"
+                            Grid.Column="0" Margin="10,0,0,0"
+                            HorizontalAlignment="Left" VerticalAlignment="Center">
+                            Calculated Power
+                        </TextBlock>
+                        <TextBlock
+                            x:Name="tbCalcPower" Grid.Row="3"
+                            Grid.Column="1" HorizontalAlignment="Center"
+                            VerticalAlignment="Center" FontSize="14"
+                            FontWeight="Bold"
+                            Text="{Binding CalculatedPower, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1, FallbackValue=0.0}" />
+                        <TextBlock
+                            x:Name="tbCalcPowerUnits" Grid.Row="3"
+                            Grid.Column="2" HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            [kW]
+                        </TextBlock>
+
+                        <!--  ISOConsumption  -->
+                        <TextBlock
+                            x:Name="tvISOConsumption" Grid.Row="4"
+                            Grid.Column="0" Margin="10,0,0,0"
+                            HorizontalAlignment="Left" VerticalAlignment="Center">
+                            ISO M/E Consumption:
+                        </TextBlock>
+                        <TextBlock
+                            x:Name="tvISOConsumptionValue" Grid.Row="4"
+                            Grid.Column="1" HorizontalAlignment="Center"
+                            VerticalAlignment="Center" FontSize="14"
+                            FontWeight="Bold"
+                            Text="{Binding ISOConsumption, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1, FallbackValue=0.0}" />
+                        <TextBlock
+                            x:Name="tvISOConsumptionUnits" Grid.Row="4"
+                            Grid.Column="2" HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            [tons/day]
+                        </TextBlock>
+
+                        <!--  Flow Meter  -->
+                        <TextBlock
+                            x:Name="tvFlowMeter" Grid.Row="5"
+                            Grid.Column="0" Margin="10,0,0,0"
+                            HorizontalAlignment="Left" VerticalAlignment="Center">
+                            Flow Meter Type
+                        </TextBlock>
+                        <ComboBox
+                            x:Name="cbFlowMeter" Grid.Row="5"
+                            Grid.Column="1" Margin="5,0,5,0"
+                            VerticalAlignment="Center" HorizontalContentAlignment="Center"
+                            ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:FlowmeterType}}}"
+                            SelectedIndex="0"
+                            SelectedItem="{Binding Flowmeter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            SelectionChanged="cbFlowMeter_SelectionChanged" />
+
+                        <!--  FODensity  -->
+                        <TextBlock
+                            x:Name="tvFODensity" Grid.Row="6"
+                            Grid.Column="0" Margin="10,0,0,0"
+                            HorizontalAlignment="Left" VerticalAlignment="Center">
+                            F.O. Density at 15 °C:
+                        </TextBlock>
+                        <TextBox
+                            x:Name="tbFODensity" Grid.Row="6"
+                            Grid.Column="1" Width="80"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Text="{Binding FuelDensity15deg, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" />
+                        <TextBlock
+                            x:Name="tvFODensityUnits" Grid.Row="6"
+                            Grid.Column="2" HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            [tons/m3]
+                        </TextBlock>
+
+                        <!--  FODensityAtInletTemp  -->
+                        <TextBlock
+                            x:Name="tvFOEngineInletTemp" Grid.Row="7"
+                            Grid.Column="0" Margin="10,0,0,0"
+                            HorizontalAlignment="Left" VerticalAlignment="Center">
+                            F.O. Engine Inlet Temp:
+                        </TextBlock>
+                        <TextBox
+                            x:Name="tbFOEngineInletTemp" Grid.Row="7"
+                            Grid.Column="1" Width="80"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Text="{Binding FuelEngineInletTemp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" />
+                        <TextBlock
+                            x:Name="tvFOEngineInletTempUnits" Grid.Row="7"
+                            Grid.Column="2" HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            [°C]
+                        </TextBlock>
+
+                        <!--  FODensityAtInlet  -->
+                        <TextBlock
+                            x:Name="tvFODensityAtInlet" Grid.Row="8"
+                            Grid.Column="0" Margin="10,0,0,0"
+                            HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Run Text="F.O. Density at" />
+                            <Run Text="{Binding ElementName=tbFOEngineInletTemp, Path=Text, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Run Text="°C" />
+                        </TextBlock>
+                        <TextBlock
+                            x:Name="tbFODensityAtInletTemp" Grid.Row="8"
+                            Grid.Column="1" HorizontalAlignment="Center"
+                            VerticalAlignment="Center" FontSize="14"
+                            FontWeight="Bold"
+                            Text="{Binding FuelDensityInletTemp, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N3, FallbackValue=0.000}" />
+                        <TextBlock
+                            x:Name="tvFODensityAtInletUnits" Grid.Row="8"
+                            Grid.Column="2" HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            [tons/m3]
+                        </TextBlock>
+
+                        <!--  FuelInletVolume  -->
+                        <TextBlock
+                            x:Name="tvFuelInletVolume" Grid.Row="9"
+                            Grid.Column="0" Margin="10,0,0,0"
+                            HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Run Text="F.O. Inlet Volume at" />
+                            <Run Text="{Binding ElementName=tbFOEngineInletTemp, Path=Text, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Run Text="°C" />
+                        </TextBlock>
+                        <TextBox
+                            x:Name="tbFuelInletVolume" Grid.Row="9"
+                            Grid.Column="1" Width="80"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Text="{Binding FuelInletVolume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" />
+                        <TextBlock
+                            x:Name="tvFuelInletVolumeUnits" Grid.Row="9"
+                            Grid.Column="2" HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            [ltrs]
+                        </TextBlock>
+
+                        <!--  FuelInletWeight  -->
+                        <TextBlock
+                            x:Name="tvFuelInletWeight" Grid.Row="10"
+                            Grid.Column="0" Margin="10,0,0,0"
+                            HorizontalAlignment="Left" VerticalAlignment="Center"
+                            Text="F.O. Inlet Weight" />
+                        <TextBox
+                            x:Name="tbFuelInletWeight" Grid.Row="10"
+                            Grid.Column="1" Width="80"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Text="{Binding FuelInletWeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" />
+                        <TextBlock
+                            x:Name="tvFuelInletWeightUnits" Grid.Row="10"
+                            Grid.Column="2" HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            [kgr]
+                        </TextBlock>
+
+                        <!--  ReturnVolume  -->
+                        <TextBlock
+                            x:Name="tvReturnVolume" Grid.Row="11"
+                            Grid.Column="0" Margin="10,0,0,0"
+                            HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Run Text="F.O. Return Volume at" />
+                            <Run Text="{Binding ElementName=tbFOEngineInletTemp, Path=Text, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Run Text="°C" />
+                        </TextBlock>
+                        <TextBox
+                            x:Name="tbReturnVolume" Grid.Row="11"
+                            Grid.Column="1" Width="80"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Text="{Binding FuelReturnVolume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" />
+                        <TextBlock
+                            x:Name="tvReturnVolumetUnits" Grid.Row="11"
+                            Grid.Column="2" HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            [ltrs]
+                        </TextBlock>
+
+                    </Grid>
+                </Border>
+
+            </DockPanel>
+
+
+            <DockPanel Grid.Row="0" Grid.Column="2">
+                <Label
+                    DockPanel.Dock="Top" FontSize="14"
+                    FontWeight="Bold" Foreground="DarkGray">
+                    Calculations:
+                </Label>
+                <Border Margin="10,0,10,10" CornerRadius="0">
+                    <Border.Effect>
+                        <DropShadowEffect
+                            BlurRadius="10" ShadowDepth="8"
+                            Color="Gray" />
+                    </Border.Effect>
+                    <DataGrid
+                        x:Name="dgvCalc" AutoGenerateColumns="True"
+                        ItemsSource="{Binding lstCalcs}"
+                        SelectionChanged="DgvCalc_SelectionChanged">
+
+                        <!--  Resources  -->
+                        <DataGrid.Resources>
+
+                            <!--  DataGrid Header Style  -->
+                            <Style TargetType="{x:Type xcdg:ColumnManagerRow}">
+                                <Setter Property="Background" Value="#FFC4ECFF" />
+                                <Setter Property="BorderBrush" Value="Black" />
+                                <Setter Property="Foreground" Value="DarkBlue" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                                <Setter Property="FontSize" Value="12" />
+                            </Style>
+
+                            <!--  DataGrid Header ToolTips  -->
+                            <Style TargetType="{x:Type xcdg:ColumnManagerCell}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=FieldName}" Value="t">
+                                        <Setter Property="ToolTip" Value="Temperature [degC]." />
+                                    </DataTrigger>
+
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
+
+
+                    </DataGrid>
+                </Border>
+            </DockPanel>
+
+
+        </Grid>
+
+    </DockPanel>
+</Window>
